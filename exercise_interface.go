@@ -1,16 +1,41 @@
 package main
 
-import (
-  "fmt"
-)
+import "fmt"
+
+
+type USB interface {
+  Name() string
+  Connecter
+}
+
+type Connecter interface {
+  Connect()
+}
+
+type PhoneConnect struct {
+  name string
+}
+
+func (pc PhoneConnect) Name() string {
+  return pc.name
+}
+
+func (pc PhoneConnect) Connect() {
+  fmt.Println("Connect:", pc.name)
+}
 
 func main() {
-  sm := make([]map[int] string, 5)
-  for i := range sm {
-    sm[i] = make(map[int] string)
-    sm[i][1] = "OK"
-    fmt.Println(sm[i])
-  }
+  var a USB
+  a = PhoneConnect{"PhoneConnect"}
 
-  fmt.Println(sm)
+  a.Connect()
+  Disconnect(a)
+}
+
+func Disconnect(usb USB) {
+  if pc, ok := usb.(PhoneConnect); ok {
+    fmt.Println("Disconnected:", pc.name)
+    return
+  }
+  fmt.Println("Unknown device")
 }

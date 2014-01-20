@@ -9,16 +9,16 @@ type Person struct {
 }
 
 func (self Person) Say() {
-	fmt.Println("say person")
+  fmt.Println("say person")
 }
 
 func Hello(n string) string {
-	return n
+  return n
 }
 
 func main() {
-	p := &Person {Hello}
-	ret := p.GetName("good")
-	fmt.Println(ret)
-	p.Say()
+  p := &Person {Hello}
+  ret := p.GetName("good")
+  fmt.Println(ret)
+  p.Say()
 }

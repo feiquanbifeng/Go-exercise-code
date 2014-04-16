@@ -4,7 +4,7 @@ import (
     "fmt"
 )
 
-type SellInterface interface {
+type Seller interface {
     Sell() interface{}
 }
 
@@ -17,19 +17,19 @@ type RedWineProxy struct {
     sellCount int
 }
 
-func (self *RedWineFactory) Sell() interface{} {
+func (f *RedWineFactory) Sell() interface{} {
     fmt.Println("This is real role")
     return nil
 }
 
-func (self *RedWineProxy) Sell() interface{} {
-    obj := self.factory.Sell()
-    self.sellCount++
-    fmt.Println("The factory selled :", self.sellCount)
+func (p *RedWineProxy) Sell() interface{} {
+    obj := p.factory.Sell()
+    p.sellCount++
+    fmt.Println("The factory selled :", p.sellCount)
     return obj
 }
 
 func main() {
-    var sell SellInterface = &RedWineProxy {sellCount: 4}
+    var sell Seller = &RedWineProxy{sellCount: 4}
     sell.Sell()
 }

@@ -33,7 +33,7 @@ func main() {
   m := Manager{User: User{1, "HaHa", 22}, title: "132"}
   t := reflect.TypeOf(m)
 
-  fmt.Println("%#v\n", t.Field(1))
+  fmt.Printf("%#v\n", t.Field(1))
 
   x := 123
   v := reflect.ValueOf(&x)
@@ -60,11 +60,11 @@ func Info(o interface{}) {
   for i := 0; i < t.NumField(); i++ {
     f := t.Field(i)
     val := v.Field(i).Interface()
-    fmt.Println("%6s: %v = %v\n", f.Name, f.Type, val)
+    fmt.Printf("%6s: %v = %v\n", f.Name, f.Type, val)
   }
  
   for i := 0; i < t.NumMethod(); i++ {
     m := t.Method(i)
-    fmt.Println("%6s: %v\n", m.Name, m.Type)
+    fmt.Printf("%6s: %v\n", m.Name, m.Type)
   }
 }

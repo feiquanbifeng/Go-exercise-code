@@ -2,8 +2,8 @@ package main
 
 import "fmt"
 
-type write func(data int)
-type end func(args interface{})
+type write func(s *Stream, data int)
+type end func(s *Stream, args interface{})
 type events map[string]interface{}
 
 type Stream struct {
@@ -15,18 +15,31 @@ type Stream struct {
 	queue                  func(data ...int)
 	destroy, pause, resume func()
 	end                    func(arg ...int)
-	events
+	even                   events
 }
 
 func (s *Stream) on(name string, data interface{}) {
-
+	if s.even == nil {
+		s.even = make(map[string]interface{})
+	}
+	s.even[name] = data
 }
 
 func (s *Stream) emit(name string, data ...interface{}) interface{} {
+
+	if len(data) == 0 {
+		s.even[name].(func())()
+	} else {
+		value := s.even[name]
+		if d, ok := value.(*[]int); ok {
+			*d = append(*d, data[0].(int))
+		}
+	}
+	fmt.Println("emit", name, data)
 	return nil
 }
 
-func Through(w write, e end, opts ...bool) *Stream {
+func Throug(w write, e end, opts ...bool) *Stream {
 
 	var (
 		ended       = false
@@ -50,18 +63,19 @@ func Through(w write, e end, opts ...bool) *Stream {
 	}
 
 	s.write = func(data int) bool {
-		w(data)
+		w(s, data)
 		return !s.paused
 	}
 
 	var drain = func() interface{} {
 		for len(buffer) > 0 && !s.paused {
 			data := buffer[0:1]
+			buffer = buffer[1:]
 
 			if data == nil {
 				return s.emit("end")
 			} else {
-				return s.emit("data", data)
+				return s.emit("data", data[0])
 			}
 		}
 		return nil
@@ -91,7 +105,7 @@ func Through(w write, e end, opts ...bool) *Stream {
 
 	var _end = func() {
 		s.writable = false
-		e(s)
+		e(s, s)
 		if !s.writable && s.autoDestroy {
 			go s.destroy()
 		}
@@ -140,19 +154,30 @@ func Through(w write, e end, opts ...bool) *Stream {
 			s.emit("drain")
 		}
 	}
-
-	fmt.Println(s)
-
-	w(1)
 	return s
 }
 
 func main() {
 	fmt.Println("Hello, 世界")
 
-	Through(func(data int) {
-		fmt.Println("call")
-	}, func(args interface{}) {
+	s := Throug(func(s *Stream, data int) {
+		s.queue(data)
+	}, func(s *Stream, args interface{}) {
 
 	}, true)
+
+	var (
+		ended  = false
+		actual = []int{}
+	)
+
+	s.on("data", &actual)
+	s.on("end", func() {
+		ended = true
+	})
+
+	s.write(1)
+	s.write(2)
+	s.write(3)
+	fmt.Println(actual)
 }

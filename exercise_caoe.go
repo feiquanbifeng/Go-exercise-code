@@ -9,10 +9,14 @@ import (
     "os/signal"
 )
 
+const (
+    SYS_FORK = 57
+)
+
 func main() {
-    pid, _, sysErr := syscall.RawSyscall(syscall.SYS_FORK, 0, 0, 0)
-    if sysErr != nil {
-        panic(sysErr)
+    pid, _, sysErr := syscall.RawSyscall(SYS_FORK, 0, 0, 0)
+    if sysErr != 0 {
+        panic(sysErr.Error())
     }
     fmt.Println(pid)
     //install(true, syscall.SIGTERM)
@@ -43,7 +47,7 @@ func install(fork bool, sig syscall.Signal) {
         ss := signalSetNew()
         ss.register(syscall.SIGINT, handler)
         ss.register(syscall.SIGQUIT, handler)
-        ss.register(syscall.SIGTERM, handler)
+        ss.register(syscall.Signal(0xf), handler)
         ss.register(syscall.SIGCHLD, makeChildDieSignalHandler(gid, sig))
 
         for {
@@ -67,15 +71,15 @@ func install(fork bool, sig syscall.Signal) {
         reg(os.Getpid(), sig)
         return
     }
-    pid, _, sysErr := syscall.RawSyscall(syscall.SYS_FORK, 0, 0, 0)
-    if sysErr != nil {
-        panic(sysErr)
+    pid, _, sysErr := syscall.RawSyscall(SYS_FORK, 0, 0, 0)
+    if sysErr != 0 {
+        panic(sysErr.Error())
     }
     if pid == 0 {
-        syscall.Setpgid(0, 0)
+        //syscall.Setpgid(0, 0)
     } else {
         gid := pid
-        reg(gid, sig)
+        reg(int(gid), sig)
         for {
 
         }
@@ -98,5 +102,6 @@ func makeChildDieSignalHandler(gid int, sig os.Signal) signalHandler {
 
 func exitWhenParentOrChildDies(sig os.Signal) error {
     pid := os.Getppid()
+    fmt.Println(pid)
     return nil
 }

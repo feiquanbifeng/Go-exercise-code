@@ -135,7 +135,7 @@ func (tmp *Tmp) CreateTmpFile() (err error, name string, fd *os.File, removeCall
 
     flag := os.O_CREATE | os.O_EXCL | os.O_RDWR
 
-    var dirName = string(name[:strings.LastIndex(name, `\`)])
+    var dirName = string(name[:strings.LastIndex(name, string(filepath.Separator))])
 
     _, err = exec.LookPath(dirName)
 

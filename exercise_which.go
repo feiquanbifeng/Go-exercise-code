@@ -1,3 +1,5 @@
+// which just to find command in you path
+// refer to the nodejs which
 package main
 
 import (
@@ -220,7 +222,7 @@ func absUnix(p string) bool {
 }
 
 func main() {
-    r := which.Which("java.exe", func(argv ...interface{}) interface{} {
+    r := Which("java.exe", func(argv ...interface{}) interface{} {
         switch len(argv) {
         case 1:
             switch argv[0].(type) {

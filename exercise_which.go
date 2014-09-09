@@ -141,7 +141,7 @@ func WhichSync(cmd string) string {
 
     var (
         pathEnv = strs.Split(os.Getenv("PATH"), colon)
-        pathExt = []string{""}
+        pathExt []string
     )
 
     if isWin {

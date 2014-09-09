@@ -85,7 +85,7 @@ func Which(cmd string, cb func(args ...interface{}) interface{}) interface{} {
 
     var (
         pathEnv = strs.Split(os.Getenv("PATH"), colon)
-        pathExt = []string{""}
+        pathExt []string
     )
 
     if isWin {

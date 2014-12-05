@@ -32,7 +32,7 @@ func main() {
         log.Fatalln("Read file config.json error:", err)
     }
     c := new(Config)
-    // notice that slice 3 maybe the bow code
+    // Handle BOM-UTF8.
     json.Unmarshal(data[3:], c)
     r := NewConfig(c.StoreConfig)
     fmt.Println(r.Addr)

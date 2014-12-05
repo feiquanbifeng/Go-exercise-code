@@ -1,11 +1,11 @@
 // json config
-// lower injection
+// isolation code
 
 package main
 
 import (
-    "io/ioutil"
     "encoding/json"
+    "io/ioutil"
     "fmt"
     "log"
 )
@@ -31,9 +31,8 @@ func main() {
     if err != nil {
         log.Fatalln("Read file config.json error:", err)
     }
-
     c := new(Config)
-    // ataintion bow code
+    // notice that slice 3 maybe the bow code
     json.Unmarshal(data[3:], c)
     r := NewConfig(c.StoreConfig)
     fmt.Println(r.Addr)
